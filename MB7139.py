@@ -64,7 +64,7 @@ def findMedian():
     while (countNum1 <= sampNum):
         samplingList.append(float(sampling()))
         medianVal = median(samplingList)
-        print("Count Number = ", countNum)
+        print("Count Number = ", countNum1)
         countNum1 += 1
     return medianVal
 
