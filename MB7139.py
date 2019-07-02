@@ -18,7 +18,7 @@ from urllib.request import urlopen
 
 # Definition of variable
 id_No    = "9999"
-SampNum  = 20
+sampNum  = 8
 settlementDep = -1.0 # Unit in cm
 GPIO_TRIGECHO =  15  # Define GPIO to use on RPi
 countNum2 = -1
