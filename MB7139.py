@@ -60,12 +60,12 @@ def sampling():
 
 def findMedian():
     countNum1 = 0
-    sampList = []
+    samplingList = []
     while (countNum1 <= sampNum):
         samplingList.append(float(sampling()))
         medianVal = median(samplingList)
         print("Count Number = ", countNum)
-        countNum += 1
+        countNum1 += 1
     return medianVal
 
 def pipeLg():
