@@ -18,11 +18,10 @@ from urllib.request import urlopen
 
 # Definition of variable
 id_No    = "9999"
-sampList = []
-sampNum  = 20
+SampNum  = 20
 settlementDep = -1.0 # Unit in cm
 GPIO_TRIGECHO =  15  # Define GPIO to use on RPi
-countNum = -1
+countNum2 = -1
 
 # Use BCM GPIO references
 # instead of physical pin numbers
@@ -60,10 +59,13 @@ def sampling():
     return distance
 
 def findMedian():
-    countNum = 0
-    while (countNum <= sampNum):
+    countNum1 = 0
+    sampList = []
+    while (countNum1 <= sampNum):
         samplingList.append(float(sampling()))
-    medianVal = median(samplingList)
+        medianVal = median(samplingList)
+        print("Count Number = ", countNum)
+        countNum += 1
     return medianVal
 
 def pipeLg():
@@ -75,7 +77,7 @@ def pipeLg():
 def waterLev(arg1):
     while True:
         print("Start measurement......")
-        wLev = arg1 - sampling()
+        wLev = arg1 - findMedian()
         if (wLev > settlementDep):
             break
         else:
@@ -95,10 +97,10 @@ def httpPOST(String0, String1, String2, String3):
 
 try:
     while True:
-        while (countNum < 0):
+        while (countNum2 < 0):
             pLgVal  = pipeLg()
             httpPOST(id_No, pLgVal, "Reboot", 0)
-            countNum +=1
+            countNum2 +=1
         
         wLevVal = waterLev(pLgVal)              
         print("Pipe length : %.2f cm" % pLgVal)
