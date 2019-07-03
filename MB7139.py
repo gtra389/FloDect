@@ -19,7 +19,7 @@ from urllib.request import urlopen
 
 # Definition of variable
 id_No    = "9999"
-sampList = []
+samplingList = []
 sampNum  = 20
 settlementDep = -1.0 # Unit in cm
 GPIO_TRIGECHO =  15  # Define GPIO to use on RPi
@@ -63,7 +63,8 @@ def findMedian():
     countNum = 0
     while (countNum <= sampNum):
         samplingList.append(float(sampling()))
-    medianVal = median(samplingList)
+        medianVal = median(samplingList)
+        countNum += 1
     return medianVal
 
 def pipeLg():
