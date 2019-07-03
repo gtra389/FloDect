@@ -5,9 +5,9 @@
 # Product number: MB7139-100
 # Serial communication protocol: Pulse-width measurement by using GPIO
 # Purpose:
-# Detect water level every 60 sec (Unit in cm)
+# Detect water level every 1 hr (Unit in cm)
 # 
-
+#
 
 # Including
 from statistics import median
@@ -110,12 +110,12 @@ try:
             httpPOST(id_No, pLgVal, "Reboot", 0)
             countNum += 1
         
-        wLevVal = waterLev(pLgVal)
-        sleepTime = scenarioDetect(wLevVal)
+        wLevVal = waterLev(pLgVal)              
         print("Pipe length : %.3f cm" % pLgVal)
         print("Water level : %.3f cm" % wLevVal)
-        httpPOST(id_No, wLevVal, 0, 0)        
-        time.sleep(sleepTime)
+        httpPOST(id_No, wLevVal, 0, 0)
+        
+        time.sleep(30)
 
 except KeyboardInterrupt:
     print("Stop")
