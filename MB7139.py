@@ -23,7 +23,7 @@ samplingList = []
 sampNum  = 20
 settlementDep = -1.0 # Unit in cm
 GPIO_TRIGECHO =  15  # Define GPIO to use on RPi
-countNum = -1
+countNum_Loop = -1
 officalThreshold = 5.0 # Unit in cm
 
 # Use BCM GPIO references instead of physical pin numbers 
@@ -84,7 +84,8 @@ def waterLev(arg1):
         else:
             print("Error in detecting the water level.")
             print("Send a log information back to the server.")
-            httpPOST(id_No, 0, "Error", 0)
+            httpPOST(id_No, wLev, "Error", 0)
+            countNum_Loop = -1
     return wLev
             
 def httpPOST(String0, String1, String2, String3):
@@ -96,27 +97,30 @@ def httpPOST(String0, String1, String2, String3):
     
 def scenarioDetect(arg2):
     if (arg2 > 0.0) & (arg2 < officalThreshold):        
-        sleepT = 30 # Unit in sec
+        sleepT = 60*10 # Unit in sec
     elif (arg2 > 0.0) & (arg2 >= officalThreshold):
-        sleepT = 10 # Unit in sec
+        sleepT = 60*5 # Unit in sec
     else:        
-        sleepT = 60 # Unit in sec        
-    return sleepT
-    
+        sleepT = 60*30 # Unit in sec        
+    return sleepT    
 
 try:
     while True:
-        while (countNum < 0):
+        while (countNum_Loop < 0):
             pLgVal  = pipeLg()
             httpPOST(id_No, pLgVal, "Reboot", 0)
-            countNum += 1
+            countNum_Loop += 1
         
-        wLevVal = waterLev(pLgVal)              
+        wLevVal = waterLev(pLgVal)
+        if countNum_Loop == -1:
+          break
+        
+        sleepT = scenarioDetect(wLevVal)
+        
         print("Pipe length : %.3f cm" % pLgVal)
         print("Water level : %.3f cm" % wLevVal)
-        httpPOST(id_No, wLevVal, 0, 0)
-        
-        time.sleep(30)
+        httpPOST(id_No, wLevVal, 0, 0)        
+        time.sleep(sleepT)
 
 except KeyboardInterrupt:
     print("Stop")
