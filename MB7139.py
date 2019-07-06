@@ -89,12 +89,21 @@ def waterLev(arg1):
             countNum_Loop = -1
     return wLev
             
-def httpPOST(String0, String1, String2, String3):
-    timeStamp = strftime("%Y%m%d%H%M%S")
-    url = 'http://ec2-54-175-179-28.compute-1.amazonaws.com/update_general.php?site=Mucha&time='+repr(timeStamp)+'&weather=0&id='+ str(String0) + \
-          '&air=0&acceleration=0&cleavage=0&incline=0&field1='+repr(String1)+'&field2='+repr(String2)+'&field3='+repr(String3)
-    resp = urlopen(url).read()    
-    print('------------------------')
+def httpPOST(String0, String1, String2, String3):    
+    try:
+        timeStamp = strftime("%Y%m%d%H%M%S")
+        url = 'http://ec2-54-175-179-28.compute-1.amazonaws.com/update_general.$
+              '&air=0&acceleration=0&cleavage=0&incline=0&field1='+repr(String1$
+        resp = urlopen(url).read()
+        #httpCode = resp.code
+        print('------------------------')
+    except:
+         print('We have an error!')
+         print('Waiting')
+         time.sleep(180)
+         resp = urlopen(url).read()         
+         print('------------------------')
+
     
 def scenarioDetect(arg2):
     if (arg2 > 0.0) & (arg2 < officalThreshold):        
