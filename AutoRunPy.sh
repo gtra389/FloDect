@@ -10,6 +10,6 @@ do
     sudo python3 /home/pi/3meters/3m_main.py >> log
     sleep 180
   else
-  	sleep 180
+    sleep 180
   fi
 done
