@@ -15,7 +15,8 @@ import time
 import RPi.GPIO as GPIO
 import urllib3
 from time import gmtime, strftime
-from urllib.request import urlopen
+#from urllib.request import urlopen
+from urllib2 import urlopen
 
 # Definition of variable
 id_No    = "9999"
