@@ -100,7 +100,7 @@ def httpPOST(String0, String1, String2, String3):
     except:
          print('We have an error!')
          print('Waiting')
-         time.sleep(180)
+         time.sleep(30)
          resp = urlopen(url).read()         
          print('------------------------')
 
@@ -127,6 +127,7 @@ try:
         
         sleepT = scenarioDetect(wLevVal)
         
+        print("Upload time : %" % timeStamp)
         print("Pipe length : %.3f cm" % pLgVal)
         print("Water level : %.3f cm" % wLevVal)
         httpPOST(id_No, wLevVal, 0, 0)        
