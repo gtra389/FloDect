@@ -1,12 +1,12 @@
 #!/bin/bash
 
 sleep 15
-sudo python /home/pi/FloDect/MB7139.py >> log
+sudo python /home/pi/FloDect/MB7139_main_v2.py >> log
 while :
 do
   if [ `ps -U root -u root u | grep python | wc -m` -eq 0 ]
   then 
-    sudo python /home/pi/FloDect/MB7139.py >> log
+    sudo python /home/pi/FloDect/MB7139_main_v2.py >> log
     sleep 180
   else
     sleep 180
