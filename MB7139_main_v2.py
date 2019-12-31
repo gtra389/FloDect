@@ -39,10 +39,8 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(GPIO_TRIGECHO,GPIO.IN)  # Initial state as input
 GPIO.setwarnings(False)
 
-
 def sampling():
   # This function measures a distance
-
   # Set line to input to check for start of echo response
     GPIO.setup(GPIO_TRIGECHO, GPIO.IN)
     while GPIO.input(GPIO_TRIGECHO) == 0:
@@ -93,7 +91,7 @@ def find_avg_std():
     return [mean_new, std_new]
 
 def debugMod():
-    ountNum = 0
+    countNum = 0
     sampNum = 10
     samplingList = []
     while (countNum <= sampNum):
@@ -106,8 +104,8 @@ def debugMod():
     print("---------- Result ----------")
     print("Sampling list:")
     print(samplingList)
-    print("Mean: {}".fomrat(mean))
-    print("StdV: {}".fomrat(std))
+    print("Mean: {}".format(mean))
+    print("StdV: {}".format(std))
 
     # not_outlier_num = 0
     # for ii in range(0, len(samplingList)):    
@@ -126,8 +124,8 @@ def debugMod():
     print("---------- Rearranging Result ----------")
     print("Sampling list:")
     print(samplingList)
-    print("Mean: {}".fomrat(mean_new))
-    print("StdV: {}".fomrat(std_new))
+    print("Mean: {}".format(mean_new))
+    print("StdV: {}".format(std_new))
     time.sleep(5)
     
 
@@ -136,16 +134,16 @@ def pipeLg():
     # pLg = round(findMedian(),3)
     print("Start to measure the total length of pipeline......")    
     pLg_list = find_avg_std()
-    print("Mean: {}".fomrat(pLg_list[0]))
-    print("StdV: {}".fomrat(pLg_list[1]))
-    print("StdV * {}: {}".fomrat(stdMultiple, pLg_list[1]*5))
+    print("Mean: {}".format(pLg_list[0]))
+    print("StdV: {}".format(pLg_list[1]))
+    print("StdV * {}: {}".format(stdMultiple, pLg_list[1]*5))
     return pLg_list
 
 def waterLev(arg1):
     print("Start measurement......")
     pLg_meas = find_avg_std()
-    print("Mean: {}".fomrat(pLg_meas[0]))
-    print("StdV: {}".fomrat(pLg_meas[1]))
+    print("Mean: {}".format(pLg_meas[0]))
+    print("StdV: {}".format(pLg_meas[1]))
 
     if  arg1[0] - stdMultiple * arg1[1] < pLg_meas[0] < arg1[0] + stdMultiple * arg1[1]:
         # avg_pipeLg - 1 * stdvar  < measurement < avg_pipeLg + 1 * stdvar
@@ -209,7 +207,7 @@ if not debug:
             
             wLevVal = waterLev(pLgVal)
             if countNum_Loop == -1:
-            break
+                break
             
             sleepT = scenarioDetect(wLevVal)
             
