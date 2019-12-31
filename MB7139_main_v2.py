@@ -31,35 +31,27 @@ GPIO_TRIGECHO =  15  # Define GPIO to use on RPi
 countNum_Loop = -1
 officalThreshold = 5.0 # Unit in cm
 debug = True
+stdMultiple = 5
 
 # Use BCM GPIO references instead of physical pin numbers 
 GPIO.setmode(GPIO.BCM)
 # Set pins as output and input
-GPIO.setup(GPIO_TRIGECHO,GPIO.OUT)  # Initial state as output
-# Set trigger to False (Low)
-GPIO.output(GPIO_TRIGECHO, False)
+GPIO.setup(GPIO_TRIGECHO,GPIO.IN)  # Initial state as input
+GPIO.setwarnings(False)
+
 
 def sampling():
   # This function measures a distance
-  # Pulse the trigger/echo line to initiate a measurement
-    # GPIO.output(GPIO_TRIGECHO, True)
-    # time.sleep(0.00001)
-    # GPIO.output(GPIO_TRIGECHO, False)
-    
-  # Ensure start time is set in case of very quick return
-    start = time.time()
-    stop  = time.time()
+
   # Set line to input to check for start of echo response
     GPIO.setup(GPIO_TRIGECHO, GPIO.IN)
     while GPIO.input(GPIO_TRIGECHO) == 0:
-        start = time.time() # Unit in sec
-
+        continue
+    start = time.time() # Unit in sec
   # Wait for end of echo response
     while GPIO.input(GPIO_TRIGECHO) == 1:
-        stop = time.time() # Unit in sec
-  
-    GPIO.setup(GPIO_TRIGECHO, GPIO.OUT)
-    GPIO.output(GPIO_TRIGECHO, False)
+        continue
+    stop = time.time() # Unit in sec
 
     elapsedOneway = (stop-start)/2.0
     distance = elapsedOneway * (331.4 + 0.606 * 25) * 100 # Unit in cm
@@ -103,8 +95,6 @@ def find_avg_std():
 def debugMod():
     ountNum = 0
     sampNum = 10
-    stdMultiple = 1
-
     samplingList = []
     while (countNum <= sampNum):
         samplingList.append(float(sampling()))      
@@ -139,26 +129,26 @@ def debugMod():
     print("Mean: {}".fomrat(mean_new))
     print("StdV: {}".fomrat(std_new))
     time.sleep(5)
-
     
 
 def pipeLg():
     # pLg = 0.0
     # pLg = round(findMedian(),3)
     print("Start to measure the total length of pipeline......")    
-    pLg_list = find_avg_std()   
+    pLg_list = find_avg_std()
+    print("Mean: {}".fomrat(pLg_list[0]))
+    print("StdV: {}".fomrat(pLg_list[1]))
+    print("StdV * {}: {}".fomrat(stdMultiple, pLg_list[1]*5))
     return pLg_list
-
 
 def waterLev(arg1):
     print("Start measurement......")
     pLg_meas = find_avg_std()
-    print("Mean : %.3f " % pLg_meas[0])
-    print("StdV : %.3f " % pLg_meas[1])
+    print("Mean: {}".fomrat(pLg_meas[0]))
+    print("StdV: {}".fomrat(pLg_meas[1]))
 
-    if  arg1[0] - 1 * arg1[1] < pLg_meas[0] < arg1[0] + 1 * arg1[1]:
-        # avg   - 1 * stdvar  < measurement < avg     + 1 * stdvar
-
+    if  arg1[0] - stdMultiple * arg1[1] < pLg_meas[0] < arg1[0] + stdMultiple * arg1[1]:
+        # avg_pipeLg - 1 * stdvar  < measurement < avg_pipeLg + 1 * stdvar
         wLev = 0.0 # There is no water
     else:
         # water level = pipe length - measurement
@@ -199,7 +189,6 @@ def httpPOST(String0, String1, String2, String3):
          time.sleep(20)
          resp = urlopen(url).read()         
          print('------------------------')
-
     
 def scenarioDetect(arg2):
     if (arg2 > 0.0) & (arg2 < officalThreshold):        
