@@ -42,9 +42,10 @@ GPIO.output(GPIO_TRIGECHO, False)
 def sampling():
   # This function measures a distance
   # Pulse the trigger/echo line to initiate a measurement
-    GPIO.output(GPIO_TRIGECHO, True)
-    time.sleep(0.00001)
-    GPIO.output(GPIO_TRIGECHO, False)
+    # GPIO.output(GPIO_TRIGECHO, True)
+    # time.sleep(0.00001)
+    # GPIO.output(GPIO_TRIGECHO, False)
+    
   # Ensure start time is set in case of very quick return
     start = time.time()
     stop  = time.time()
