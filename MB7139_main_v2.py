@@ -30,6 +30,7 @@ sampNum  = 20
 GPIO_TRIGECHO =  15  # Define GPIO to use on RPi
 countNum_Loop = -1
 officalThreshold = 5.0 # Unit in cm
+debug = True
 
 # Use BCM GPIO references instead of physical pin numbers 
 GPIO.setmode(GPIO.BCM)
@@ -46,14 +47,14 @@ def sampling():
     GPIO.output(GPIO_TRIGECHO, False)
   # Ensure start time is set in case of very quick return
     start = time.time()
-
+    stop  = time.time()
   # Set line to input to check for start of echo response
     GPIO.setup(GPIO_TRIGECHO, GPIO.IN)
-    while GPIO.input(GPIO_TRIGECHO)==0:
+    while GPIO.input(GPIO_TRIGECHO) == 0:
         start = time.time() # Unit in sec
 
   # Wait for end of echo response
-    while GPIO.input(GPIO_TRIGECHO)==1:
+    while GPIO.input(GPIO_TRIGECHO) == 1:
         stop = time.time() # Unit in sec
   
     GPIO.setup(GPIO_TRIGECHO, GPIO.OUT)
@@ -97,6 +98,48 @@ def find_avg_std():
     std_new  = statistics.stdev(samplingList)
     mean_new = statistics.mean(samplingList)
     return [mean_new, std_new]
+
+def debugMod():
+    ountNum = 0
+    sampNum = 10
+    stdMultiple = 1
+
+    samplingList = []
+    while (countNum <= sampNum):
+        samplingList.append(float(sampling()))      
+        countNum += 1
+
+    std = statistics.stdev(samplingList)
+    mean = statistics.mean(samplingList)
+
+    print("---------- Result ----------")
+    print("Sampling list:")
+    print(samplingList)
+    print("Mean: {}".fomrat(mean))
+    print("StdV: {}".fomrat(std))
+
+    # not_outlier_num = 0
+    # for ii in range(0, len(samplingList)):    
+    #     if  (mean - 1 * std < samplingList[ii] < mean + 1 * std):
+    #         not_outlier_num += 1
+
+    # not_outlier_ratio = not_outlier_num/len(samplingList)
+
+    # Remove Outliers from  mean +- std
+    samplingList = [x for x in samplingList if (x > mean - stdMultiple * std)]
+    samplingList = [x for x in samplingList if (x < mean + stdMultiple * std)]
+
+    std_new  = statistics.stdev(samplingList)
+    mean_new = statistics.mean(samplingList)
+
+    print("---------- Rearranging Result ----------")
+    print("Sampling list:")
+    print(samplingList)
+    print("Mean: {}".fomrat(mean_new))
+    print("StdV: {}".fomrat(std_new))
+    time.sleep(5)
+
+    
 
 def pipeLg():
     # pLg = 0.0
@@ -166,25 +209,28 @@ def scenarioDetect(arg2):
         sleepT = 60*30 # Unit in sec        
     return sleepT    
 
-try:
-    while True:
-        while (countNum_Loop < 0):
-            pLgVal  = pipeLg()
-            httpPOST(id_No, 0.00, round(pLgVal[0],3), "Reboot")
-            countNum_Loop += 1
-        
-        wLevVal = waterLev(pLgVal)
-        if countNum_Loop == -1:
-          break
-        
-        sleepT = scenarioDetect(wLevVal)
-        
-        print("Upload time : %s" % timeStamp)
-        print("Pipe length : %.3f cm" % pLgVal)
-        print("Water level : %.3f cm" % wLevVal)
-        httpPOST(id_No, round(wLevVal,3), 0, 0)        
-        time.sleep(sleepT)
+if not debug:
+    try:
+        while True:
+            while (countNum_Loop < 0):
+                pLgVal  = pipeLg()
+                httpPOST(id_No, 0.00, round(pLgVal[0],3), "Reboot")
+                countNum_Loop += 1
+            
+            wLevVal = waterLev(pLgVal)
+            if countNum_Loop == -1:
+            break
+            
+            sleepT = scenarioDetect(wLevVal)
+            
+            print("Upload time : %s" % timeStamp)
+            print("Pipe length : %.3f cm" % pLgVal[0])
+            print("Water level : %.3f cm" % wLevVal)
+            httpPOST(id_No, round(wLevVal,3), 0, 0)        
+            time.sleep(sleepT)
 
-except KeyboardInterrupt:
-    print("Stop")
-    GPIO.cleanup()
+    except KeyboardInterrupt:
+        print("Stop")
+        GPIO.cleanup()
+else:
+    debugMod()
