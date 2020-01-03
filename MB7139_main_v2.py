@@ -161,7 +161,7 @@ def waterLev(arg1):
     print("Mean: {}".format(pLg_meas[0]))
     print("StdV: {}".format(pLg_meas[1]))
 
-    if  arg1[0] - 2 < pLg_meas[0] < arg1[0] + 2: # Unit in centimeter
+    if  arg1[0] - stdMultiple * arg1[1] < pLg_meas[0] < arg1[0] + stdMultiple * arg1[1]:
         # avg_pipeLg - 1 * stdvar  < measurement < avg_pipeLg + 1 * stdvar
         wLev = 0.0 # There is no water
     else:
@@ -237,4 +237,5 @@ if not debug:
         print("Stop")
         GPIO.cleanup()
 else:
-    debugMod()
+    while True:
+        debugMod()
