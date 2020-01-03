@@ -8,9 +8,9 @@
 # Detect water level every 1 hr (Unit in cm)
 # 
 # Updated:
-# 2019/12/28
+# 2020/01/03
 # 
-# Version: 1.1
+# Version: 1.2
 #
 
 # Including
@@ -69,8 +69,11 @@ def find_avg_std():
     countNum = 0
     samplingList = []
     while (countNum <= sampNum):
-        samplingList.append(float(sampling()))      
-        countNum += 1
+        samplingVal = float(sampling())
+
+        if samplingVal > 180.0:    # Simple filter    
+            samplingList.append(samplingVal)                  
+            countNum += 1
 
     std = statistics.stdev(samplingList)
     mean = statistics.mean(samplingList)
@@ -86,8 +89,14 @@ def find_avg_std():
     samplingList = [x for x in samplingList if (x > mean - 1 * std)]
     samplingList = [x for x in samplingList if (x < mean + 1 * std)]
 
-    std_new  = statistics.stdev(samplingList)
-    mean_new = statistics.mean(samplingList)
+    try:
+        std_new  = statistics.stdev(samplingList)
+        mean_new = statistics.mean(samplingList)
+    except:
+        std_new  = std
+        mean_new = mean
+
+    
     return [mean_new, std_new]
 
 def debugMod():
@@ -95,8 +104,11 @@ def debugMod():
     sampNum = 10
     samplingList = []
     while (countNum <= sampNum):
-        samplingList.append(float(sampling()))      
-        countNum += 1
+        samplingVal = float(sampling())
+
+        if samplingVal > 180.0:     # Simple filter   
+            samplingList.append(samplingVal)                  
+            countNum += 1
 
     std = statistics.stdev(samplingList)
     mean = statistics.mean(samplingList)
@@ -118,8 +130,12 @@ def debugMod():
     samplingList = [x for x in samplingList if (x > mean - stdMultiple * std)]
     samplingList = [x for x in samplingList if (x < mean + stdMultiple * std)]
 
-    std_new  = statistics.stdev(samplingList)
-    mean_new = statistics.mean(samplingList)
+    try:
+        std_new  = statistics.stdev(samplingList)
+        mean_new = statistics.mean(samplingList)
+    except:
+        std_new  = std
+        mean_new = mean
 
     print("---------- Rearranging Result ----------")
     print("Sampling list:")
