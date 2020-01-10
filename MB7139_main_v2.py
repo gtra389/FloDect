@@ -14,7 +14,7 @@
 #
 
 # Including
-from statistics import median
+#import statistics 
 import time
 import RPi.GPIO as GPIO
 import urllib3
@@ -26,13 +26,13 @@ import statistics
 # Definition of variable
 id_No    = "9999"
 samplingList = []
-sampNum  = 20
+# sampNum  = 20
 GPIO_TRIGECHO =  15  # Define GPIO to use on RPi
 countNum_Loop = -1
 officalThreshold = 5.0 # Unit in cm
-debug = True
+debug = False
 stdMultiple = 5
-
+count = 0
 # Use BCM GPIO references instead of physical pin numbers 
 GPIO.setmode(GPIO.BCM)
 # Set pins as output and input
@@ -65,13 +65,13 @@ def sampling():
 #         countNum += 1
 #     return medianVal
 
-def find_avg_std():
+def find_avg_std(sampNum):
     countNum = 0
     samplingList = []
     while (countNum <= sampNum):
         samplingVal = float(sampling())
 
-        if samplingVal > 180.0:    # Simple filter    
+        if samplingVal > 150.0:    # Simple filter    
             samplingList.append(samplingVal)                  
             countNum += 1
 
@@ -100,13 +100,14 @@ def find_avg_std():
     return [mean_new, std_new]
 
 def debugMod():
+    global count
     countNum = 0
     sampNum = 10
     samplingList = []
     while (countNum <= sampNum):
         samplingVal = float(sampling())
-
-        if samplingVal > 180.0:     # Simple filter   
+ 
+        if samplingVal > 0.0:     # Simple filter   
             samplingList.append(samplingVal)                  
             countNum += 1
 
@@ -142,6 +143,8 @@ def debugMod():
     print(samplingList)
     print("Mean: {}".format(mean_new))
     print("StdV: {}".format(std_new))
+    print("Count Number: {}".format(count))
+    count += 1
     time.sleep(5)
     
 
@@ -149,7 +152,7 @@ def pipeLg():
     # pLg = 0.0
     # pLg = round(findMedian(),3)
     print("Start to measure the total length of pipeline......")    
-    pLg_list = find_avg_std()
+    pLg_list = find_avg_std(100)
     print("Mean: {}".format(pLg_list[0]))
     print("StdV: {}".format(pLg_list[1]))
     print("StdV * {}: {}".format(stdMultiple, pLg_list[1]*5))
@@ -157,17 +160,18 @@ def pipeLg():
 
 def waterLev(arg1):
     print("Start measurement......")
-    pLg_meas = find_avg_std()
+    pLg_meas = find_avg_std(20)
     print("Mean: {}".format(pLg_meas[0]))
     print("StdV: {}".format(pLg_meas[1]))
 
-    if  arg1[0] - stdMultiple * arg1[1] < pLg_meas[0] < arg1[0] + stdMultiple * arg1[1]:
+    if  arg1[0] - 2 < pLg_meas[0] < arg1[0] + 2:
         # avg_pipeLg - 1 * stdvar  < measurement < avg_pipeLg + 1 * stdvar
         wLev = 0.0 # There is no water
     else:
         # water level = pipe length - measurement
         wLev = arg1[0] - pLg_meas[0]
-
+	if wLev < 0:
+           wLev = 0.0
     # while True:
     #     print("Start measurement......")
     #     wLev = round((arg1 - sampling()),3)
