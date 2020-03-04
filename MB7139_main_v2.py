@@ -17,20 +17,20 @@
 #import statistics 
 import time
 import RPi.GPIO as GPIO
-import urllib3
+#import urllib3
 from time import gmtime, strftime
 #from urllib.request import urlopen
 from urllib2 import urlopen
 import statistics
 
 # Definition of variable
-id_No    = "9999"
+id_No    = "7505"
 samplingList = []
 # sampNum  = 20
 GPIO_TRIGECHO =  15  # Define GPIO to use on RPi
 countNum_Loop = -1
 officalThreshold = 5.0 # Unit in cm
-debug = False
+debug = 0
 stdMultiple = 5
 count = 0
 # Use BCM GPIO references instead of physical pin numbers 
